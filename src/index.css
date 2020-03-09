@@ -5,9 +5,97 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  line-height: 1.3em;
+  min-height: 100vh;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+*,
+html {
+  padding: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.mapContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.sidebarStyle {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 12px 0;
+  color: #ffffff;
+  z-index: 1 !important;
+  font-weight: bold;
+  width: 100%;
+}
+
+.sidebarStyle div:first-child{
+    background-color: #404040;
+    padding: 6px;
+}
+
+.sidebarStyle div:last-child button{
+    background-color: #404040;
+    padding: 6px 12px;
+    color: white;
+    font-size: 15px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    outline: none;
+    font-family: inherit;
+    font-weight: bold;
+    line-height: 1.15384615;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.login form div:first-child {
+  display: flex;
+  justify-content: space-between;
+  max-width: 450px;
+  width: 100%;
+  margin-top: 70px;
+}
+
+.login form input {
+  width: 200px;
+  height: 30px;
+  padding: 6px;
+}
+
+.login form div:last-child {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.login form button {
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  margin-left: 8px;
+  font-size: 12px;
+  background-color: #007bff;
 }
