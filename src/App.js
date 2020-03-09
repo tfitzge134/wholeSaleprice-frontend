@@ -23,7 +23,7 @@ class App extends Component {
           <Route
             path="/map"
             render={props => {
-              if (_id) return <Map {...props}/>;
+              if (_id) return <Map {...props} />;
               return <Redirect to="/" />;
             }}
           />

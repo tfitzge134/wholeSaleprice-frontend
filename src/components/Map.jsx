@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
+import miso from './mapData/miso.json';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoidGZpdHpnZTEzNCIsImEiOiJjazdma3dma3IwM3p0M2RvMHlld2hoZ3JsIn0.qrSPDs1oe9j87_My6LrYTA';
@@ -8,21 +9,25 @@ class Map extends Component {
   state = {
     lng: -94.4266,
     lat: 41.3424,
-    zoom: 3.70,
+    zoom: 3.4,
     features: []
   };
 
-  componentDidMount() {
-    // call api here to /api/miso
-    fetch('http://localhost:5000/api/miso')
+  // call api here to /api/miso
+  handleGetFeatures = () => {
+    fetch(
+      'https://api.misoenergy.org/MISORTWDDataBroker/DataBrokerServices.asmx?messageType=getlmpconsolidatedtable&returnType=json'
+    )
       .then(res => res.json())
-      .then(data => {
-        const { prices, nodes } = data;
+      .then(misoPrice => {
+        //console.log('miso', miso);
+        //console.log('misoPrice', misoPrice.LMPData.FiveMinLMP.PricingNode);
+        const { PricingNode } = misoPrice.LMPData.FiveMinLMP;
         let features = [];
-        prices.filter(p => {
-          nodes.filter(n => {
-            if (p.name === n.nodeid) {
-              const { nodeid, city, state, lat, long } = n;
+        miso.filter(m => {
+          PricingNode.filter(p => {
+            if (m.nodeid === p.name) {
+              const { nodeid, city, state, lat, long } = m;
               const { LMP } = p;
               let obj = {
                 type: 'Feature',
@@ -47,12 +52,26 @@ class Map extends Component {
         });
 
         this.setState({ features: features });
-        console.log('features', this.state.features);
       });
+    console.log('oik');
+    const minutes = 5,
+      the_interval = minutes * 60 * 1000;
+    setTimeout(this.handleGetFeatures, the_interval);
+  };
+
+  handlePageReload = () => {
+    const minutes = 5.2,
+      the_interval = minutes * 60 * 1000;
+    setInterval(() => {
+      window.location.reload();
+    }, the_interval);
+  };
+
+  componentDidMount() {
+    this.handleGetFeatures();
+    this.handlePageReload();
 
     setTimeout(() => {
-      console.log('features', this.state.features);
-
       const map = new mapboxgl.Map({
         container: this.mapContainer,
         style: 'mapbox://styles/mapbox/streets-v11',
@@ -122,27 +141,30 @@ class Map extends Component {
             .addTo(map);
         });
       });
-    }, 500);
+    }, 2000);
   }
 
-  handleLogout(){
+  handleLogout() {
     localStorage.clear();
-    window.location = "/"
+    window.location = '/';
   }
 
   render() {
     return (
-      <div>
-        <div className="sidebarStyle">
-          <div>
-            Longitude: {this.state.lng} | Latitude: {this.state.lat} | Zoom:{' '}
-            {this.state.zoom}
+      <div className="map">
+        <div className="left-side"></div>
+        <div className="right-side">
+          <div className="sidebarStyle">
+            <div>
+              Longitude: {this.state.lng} | Latitude: {this.state.lat} | Zoom:{' '}
+              {this.state.zoom}
+            </div>
+            <div>
+              <button onClick={this.handleLogout}>Logout</button>
+            </div>
           </div>
-          <div>
-            <button onClick={this.handleLogout}>Logout</button>
-          </div>
+          <div ref={el => (this.mapContainer = el)} className="mapContainer" />
         </div>
-        <div ref={el => (this.mapContainer = el)} className="mapContainer" />
       </div>
     );
   }
