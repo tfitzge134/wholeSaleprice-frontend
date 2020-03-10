@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
 import miso from './mapData/miso.json';
+import { Link } from 'react-router-dom';
+import Navbar from './Navbar.jsx';
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoidGZpdHpnZTEzNCIsImEiOiJjazdma3dma3IwM3p0M2RvMHlld2hoZ3JsIn0.qrSPDs1oe9j87_My6LrYTA';
@@ -141,29 +143,27 @@ class Map extends Component {
             .addTo(map);
         });
       });
-    }, 2000);
-  }
-
-  handleLogout() {
-    localStorage.clear();
-    window.location = '/';
+    }, 1000);
   }
 
   render() {
     return (
-      <div className="map">
-        <div className="left-side"></div>
-        <div className="right-side">
-          <div className="sidebarStyle">
-            <div>
-              Longitude: {this.state.lng} | Latitude: {this.state.lat} | Zoom:{' '}
-              {this.state.zoom}
+      <div className="map-wrap">
+        <Navbar />
+        <div className="map">
+          <div className="left-side"></div>
+          <div className="right-side">
+            <div className="sidebarStyle">
+              <div>
+                Longitude: {this.state.lng} | Latitude: {this.state.lat} | Zoom:{' '}
+                {this.state.zoom}
+              </div>
             </div>
-            <div>
-              <button onClick={this.handleLogout}>Logout</button>
-            </div>
+            <div
+              ref={el => (this.mapContainer = el)}
+              className="mapContainer"
+            />
           </div>
-          <div ref={el => (this.mapContainer = el)} className="mapContainer" />
         </div>
       </div>
     );

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import Login from './components/Login.jsx';
 import Map from './components/Map';
+import EditUser from './components/EditUser.jsx';
 
 class App extends Component {
   state = {
@@ -20,6 +21,13 @@ class App extends Component {
     return (
       <React.Fragment>
         <Switch>
+          <Route
+            path="/edit"
+            render={props => {
+              if (_id) return <EditUser {...props} />;
+              return <Redirect to="/" />;
+            }}
+          />
           <Route
             path="/map"
             render={props => {

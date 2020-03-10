@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Login extends Component {
+class EditUser extends Component {
   state = {
     loginDetails: {
       email: '',
@@ -8,56 +8,63 @@ class Login extends Component {
     }
   };
 
+  componentDidMount() {
+    const id = localStorage.getItem('data');
+    fetch(`http://localhost:5000/api/user/single/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({
+          loginDetails: {
+            email: data.email
+          }
+        });
+        console.log(data.email);
+      });
+  }
+
   handleChange = e => {
     const loginDetails = { ...this.state.loginDetails };
     loginDetails[e.currentTarget.name] = e.currentTarget.value;
     this.setState({ loginDetails });
   };
 
-  handleLogin = event => {
+  handleEdit = event => {
     event.preventDefault();
+    const id = localStorage.getItem('data');
     const { email, password } = this.state.loginDetails;
 
-    fetch(`http://localhost:5000/api/user/${email}`)
+    fetch(`http://localhost:5000/api/user/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    })
       .then(res => res.json())
       .then(data => {
-        if (data.error) {
-          fetch(`http://localhost:5000/api/user`, {
-            method: 'POST',
-            headers: {
-              'Content-type': 'application/json'
-            },
-            body: JSON.stringify({
-              email,
-              password
-            })
-          })
-            .then(res => res.json())
-            .then(data => {
-              if (data.msg) {
-                localStorage.setItem("data", data.data._id)
-                window.location = '/map';
-              }
-            });
-        } else if (data.msg) {
-          localStorage.setItem("data", data.data._id)
+        if (data.msg) {
           window.location = '/map';
         }
       });
   };
 
   render() {
+    const { email, password } = this.state.loginDetails;
     return (
       <div className="login">
         <section>
-          <h2>Welcome To The WholeSale Miso Project</h2>
-          <form onSubmit={this.handleLogin}>
+          <h2>Edit User Details</h2>
+          <form onSubmit={this.handleEdit}>
             <div>
               <input
                 type="text"
                 name="email"
                 onChange={this.handleChange}
                 placeholder="Email"
+                value={email}
               />
               <input
                 type="password"
@@ -67,7 +74,7 @@ class Login extends Component {
               />
             </div>
             <div>
-              <button type="submit">Login</button>
+              <button type="submit">Edit</button>
             </div>
           </form>
         </section>
@@ -76,4 +83,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default EditUser;
