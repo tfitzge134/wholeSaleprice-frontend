@@ -1,18 +1,23 @@
 import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
 import miso from './mapData/miso.json';
-import { Link } from 'react-router-dom';
 import Navbar from './Navbar.jsx';
+import Select from 'react-select';
 
+// this.setState({ features: features });
 mapboxgl.accessToken =
   'pk.eyJ1IjoidGZpdHpnZTEzNCIsImEiOiJjazdma3dma3IwM3p0M2RvMHlld2hoZ3JsIn0.qrSPDs1oe9j87_My6LrYTA';
+
+// declared globally so we can use in functions outside componentDidMount
+let map;
 
 class Map extends Component {
   state = {
     lng: -94.4266,
     lat: 41.3424,
     zoom: 3.4,
-    features: []
+    features: [],
+    selectedOption: null
   };
 
   // call api here to /api/miso
@@ -33,6 +38,7 @@ class Map extends Component {
               const { LMP } = p;
               let obj = {
                 type: 'Feature',
+                label: nodeid,
                 geometry: {
                   type: 'Point',
                   coordinates: [long, lat]
@@ -55,32 +61,37 @@ class Map extends Component {
 
         this.setState({ features: features });
       });
-    console.log('oik');
     const minutes = 5,
       the_interval = minutes * 60 * 1000;
     setTimeout(this.handleGetFeatures, the_interval);
   };
 
-  handlePageReload = () => {
-    const minutes = 5.2,
-      the_interval = minutes * 60 * 1000;
-    setInterval(() => {
-      window.location.reload();
-    }, the_interval);
-  };
+  // handlePageReload = () => {
+  //   const minutes = 5.2,
+  //     the_interval = minutes * 60 * 1000;
+  //   setInterval(() => {
+  //     window.location.reload();
+  //   }, the_interval);
+  // };
 
   componentDidMount() {
     this.handleGetFeatures();
-    this.handlePageReload();
+    //this.handlePageReload();
+    map = new mapboxgl.Map({
+      container: 'mapContainer2',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [this.state.lng, this.state.lat],
+      zoom: this.state.zoom
+    });
+
+    // make call to database to fetch 10 random ndoes (latest 5 minute price)
+    // close all existing popups that are open 
+    // grab 10 random nodes - grab their coordinates and price 
+    // use mapbox new Ppup, and setHTML to create new popup.
+    // make background transparent using css. (give it a unique class name)
+    // repeat every 5 minutes 
 
     setTimeout(() => {
-      const map = new mapboxgl.Map({
-        container: this.mapContainer,
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [this.state.lng, this.state.lat],
-        zoom: this.state.zoom
-      });
-
       map.on('move', () => {
         this.setState({
           lng: map.getCenter().lng.toFixed(4),
@@ -135,7 +146,7 @@ class Map extends Component {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
           }
 
-          new mapboxgl.Popup()
+          new mapboxgl.Popup({ className: 'apple-popup' })
             .setLngLat(coordinates)
             .setHTML(
               `<h1>${description}</h1><h3>Price: ${e.features[0].properties.price}</h3>`
@@ -143,15 +154,32 @@ class Map extends Component {
             .addTo(map);
         });
       });
+      console.log('features', this.state.features);
     }, 1000);
   }
 
+  handleChange = selectedOption => {
+    map.jumpTo({
+      center: [selectedOption.properties.long, selectedOption.properties.lat],
+      zoom: 14
+    });
+
+    // https://docs.mapbox.com/mapbox-gl-js/api/#popup#addto
+  };
+
   render() {
+    const { selectedOption, features } = this.state;
     return (
       <div className="map-wrap">
         <Navbar />
         <div className="map">
-          <div className="left-side"></div>
+          <div className="left-side">
+            <Select
+              value={selectedOption}
+              onChange={this.handleChange}
+              options={features}
+            />
+          </div>
           <div className="right-side">
             <div className="sidebarStyle">
               <div>
@@ -162,6 +190,7 @@ class Map extends Component {
             <div
               ref={el => (this.mapContainer = el)}
               className="mapContainer"
+              id="mapContainer2"
             />
           </div>
         </div>

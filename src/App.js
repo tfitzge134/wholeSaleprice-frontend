@@ -5,9 +5,7 @@ import Map from './components/Map';
 import EditUser from './components/EditUser.jsx';
 
 class App extends Component {
-  state = {
-    features: []
-  };
+  state = {};
 
   componentDidMount() {
     try {

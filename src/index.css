@@ -1,3 +1,7 @@
+.apple-popup .mapboxgl-popup-content {
+  background-color: transparent;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -61,7 +65,7 @@ html {
   border-radius: 0.25rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    margin: 0 10px;
+  margin: 0 10px;
 }
 
 .navbar h2 {
@@ -114,16 +118,16 @@ html {
   min-height: 100vh;
 }
 
-.login section{
+.login section {
   max-width: 500px;
   width: 100%;
 }
 
-.login form{
+.login form {
   width: 100%;
 }
 
-.login h2{
+.login h2 {
   text-align: center;
 }
 
