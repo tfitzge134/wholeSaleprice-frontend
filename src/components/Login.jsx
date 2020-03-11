@@ -18,11 +18,11 @@ class Login extends Component {
     event.preventDefault();
     const { email, password } = this.state.loginDetails;
 
-    fetch(`http://localhost:5000/api/user/${email}`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/user/${email}`)
       .then(res => res.json())
       .then(data => {
         if (data.error) {
-          fetch(`http://localhost:5000/api/user`, {
+          fetch(`${process.env.REACT_APP_API_URL}/api/user`, {
             method: 'POST',
             headers: {
               'Content-type': 'application/json'
@@ -35,12 +35,12 @@ class Login extends Component {
             .then(res => res.json())
             .then(data => {
               if (data.msg) {
-                localStorage.setItem("data", data.data._id)
+                localStorage.setItem('data', data.data._id);
                 window.location = '/map';
               }
             });
         } else if (data.msg) {
-          localStorage.setItem("data", data.data._id)
+          localStorage.setItem('data', data.data._id);
           window.location = '/map';
         }
       });

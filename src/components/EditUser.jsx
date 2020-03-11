@@ -10,7 +10,7 @@ class EditUser extends Component {
 
   componentDidMount() {
     const id = localStorage.getItem('data');
-    fetch(`http://localhost:5000/api/user/single/${id}`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/user/single/${id}`)
       .then(res => res.json())
       .then(data => {
         this.setState({
@@ -33,7 +33,7 @@ class EditUser extends Component {
     const id = localStorage.getItem('data');
     const { email, password } = this.state.loginDetails;
 
-    fetch(`http://localhost:5000/api/user/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/user/${id}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json'

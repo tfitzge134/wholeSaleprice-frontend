@@ -6,7 +6,7 @@ class Navbar extends Component {
 
   handleDelete = e => {
     const id = localStorage.getItem('data');
-    fetch(`http://localhost:5000/api/user/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/user/${id}`, {
       method: 'Delete'
     })
       .then(res => res.json())
