@@ -25,16 +25,40 @@ class Navbar extends Component {
 
   render() {
     return (
-      <nav className="navbar">
-        <div className="inner">
-          <div>
-            <h2>Miso</h2>
-          </div>
-          <div>
-            <Link to="/edit">Edit User</Link>
-            <button onClick={this.handleDelete}>Delete User</button>
-            <button onClick={this.handleLogout}>Logout</button>
-          </div>
+      <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <Link class="navbar-brand" href="#">
+          Miso
+        </Link>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <Link class="nav-link btn btn-primary" to="/edit">
+                Edit User <span class="sr-only">(current)</span>
+              </Link>
+            </li>
+            <li class="nav-item">
+              <Link class="nav-link btn btn-danger" onClick={this.handleDelete}>
+                Delete User
+              </Link>
+            </li>
+            <li class="nav-item">
+              <Link class="nav-link btn btn-danger" onClick={this.handleLogout}>
+                Logout
+              </Link>
+            </li>
+          </ul>
         </div>
       </nav>
     );

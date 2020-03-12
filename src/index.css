@@ -1,7 +1,3 @@
-.apple-popup .mapboxgl-popup-content {
-  background-color: transparent;
-}
-
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,7 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding: 0;
-  line-height: 1.3em;
+  line-height: 1.5em;
   min-height: 100vh;
 }
 
@@ -41,48 +37,11 @@ html {
 }
 
 .navbar {
-  background-color: #343a40;
   padding: 15px;
 }
 
-.navbar .inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navbar .inner a,
-.navbar .inner button {
-  color: #fff;
-  font-weight: 400;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  border: 1px solid transparent;
-  padding: 0.375rem 0.75rem;
-  font-size: 16px !important;
-  line-height: 1.5;
-  border-radius: 0.25rem;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+.navbar .navbar-nav a {
   margin: 0 10px;
-}
-
-.navbar h2 {
-  color: white;
-  margin: 0;
-  padding: 0;
-}
-
-.navbar .inner a {
-  background-color: #007bff;
-  border-color: #007bff;
-  text-decoration: none;
-}
-
-.navbar .inner button {
-  background-color: #dc3545;
-  border-color: #dc3545;
 }
 
 .right-side {
@@ -159,3 +118,48 @@ html {
   background-color: #007bff;
 }
 
+@media (max-width: 991px) {
+  .map {
+    flex-flow: column;
+  }
+}
+
+@media (max-width: 576px){
+  .navbar .navbar-nav a {
+  margin: 5px auto;
+  max-width: 200px;
+  width: 100%;
+}
+
+.mapboxgl-popup-content h1{
+  font-size: 20px;
+}
+
+.mapboxgl-popup-content h3{
+  font-size: 16px;
+}
+}
+
+@media (max-width: 510px) {
+  .login section {
+    max-width: 300px;
+  }
+
+  .login form div:first-child {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 70px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .login form input {
+    width: 94%;
+    padding: 6px;
+    margin-top: 10px;
+  }
+
+  .sidebarStyle div {
+    font-size: 14px;
+  }
+}

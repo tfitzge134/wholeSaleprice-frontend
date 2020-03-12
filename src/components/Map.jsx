@@ -20,6 +20,72 @@ class Map extends Component {
     selectedOption: null
   };
 
+  handleMap = () => {
+    map.on('move', () => {
+      this.setState({
+        lng: map.getCenter().lng.toFixed(4),
+        lat: map.getCenter().lat.toFixed(4),
+        zoom: map.getZoom().toFixed(2)
+      });
+    });
+
+    const nodesSource = {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: this.state.features
+      }
+    };
+
+    map.on('load', function() {
+      map.addSource('nodes', nodesSource);
+      map.addLayer({
+        id: 'points',
+        type: 'symbol',
+        source: 'nodes',
+        layout: {
+          // get the icon name from the source's "icon" property
+          // concatenate the name to get an icon from the style's sprite sheet
+          'icon-image': ['concat', ['get', 'icon'], '-15'],
+          // get the title name from the source's "title" property
+          'text-field': ['get', 'title'],
+          'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+          'text-offset': [0, 0.6],
+          'text-anchor': 'top'
+        }
+      });
+      // Change the cursor to a pointer when the mouse is over the places layer.
+      map.on('mouseenter', 'points', function() {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+
+      // Change it back to a pointer when it leaves.
+      map.on('mouseleave', 'points', function() {
+        map.getCanvas().style.cursor = '';
+      });
+      map.on('click', 'points', function(e) {
+        console.log('lciekd on nodes');
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var description = e.features[0].properties.nodeid;
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        new mapboxgl.Popup({ className: 'apple-popup' })
+          .setLngLat(coordinates)
+          .setHTML(
+            `<h1>${description}</h1><h3>Price: ${e.features[0].properties.price}</h3>`
+          )
+          .addTo(map);
+      });
+    });
+    console.log('features', this.state.features);
+  };
+
   // call api here to /api/miso
   handleGetFeatures = () => {
     fetch(
@@ -59,108 +125,42 @@ class Map extends Component {
           });
         });
 
-        this.setState({ features: features });
+        this.setState({ features }, () => this.handleMap());
       });
-    const minutes = 5,
-      the_interval = minutes * 60 * 1000;
-    setTimeout(this.handleGetFeatures, the_interval);
+    setTimeout(this.handleGetFeatures, 300000);
   };
 
-  // handlePageReload = () => {
-  //   const minutes = 5.2,
-  //     the_interval = minutes * 60 * 1000;
-  //   setInterval(() => {
-  //     window.location.reload();
-  //   }, the_interval);
-  // };
+  handlePageReload = () => {
+    setInterval(() => {
+      window.location.reload();
+    }, 300000);
+  };
 
   componentDidMount() {
-    this.handleGetFeatures();
-    //this.handlePageReload();
+    const { lng, lat, zoom } = this.state;
     map = new mapboxgl.Map({
       container: 'mapContainer2',
       style: 'mapbox://styles/mapbox/streets-v11',
-      center: [this.state.lng, this.state.lat],
-      zoom: this.state.zoom
+      center: [lng, lat],
+      zoom
     });
 
+    this.handleGetFeatures();
+
     // make call to database to fetch 10 random ndoes (latest 5 minute price)
-    // close all existing popups that are open 
-    // grab 10 random nodes - grab their coordinates and price 
+    // close all existing popups that are open
+    // grab 10 random nodes - grab their coordinates and price
     // use mapbox new Ppup, and setHTML to create new popup.
     // make background transparent using css. (give it a unique class name)
-    // repeat every 5 minutes 
-
-    setTimeout(() => {
-      map.on('move', () => {
-        this.setState({
-          lng: map.getCenter().lng.toFixed(4),
-          lat: map.getCenter().lat.toFixed(4),
-          zoom: map.getZoom().toFixed(2)
-        });
-      });
-
-      const nodesSource = {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: this.state.features
-        }
-      };
-
-      map.on('load', function() {
-        map.addSource('nodes', nodesSource);
-        map.addLayer({
-          id: 'points',
-          type: 'symbol',
-          source: 'nodes',
-          layout: {
-            // get the icon name from the source's "icon" property
-            // concatenate the name to get an icon from the style's sprite sheet
-            'icon-image': ['concat', ['get', 'icon'], '-15'],
-            // get the title name from the source's "title" property
-            'text-field': ['get', 'title'],
-            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-            'text-offset': [0, 0.6],
-            'text-anchor': 'top'
-          }
-        });
-        // Change the cursor to a pointer when the mouse is over the places layer.
-        map.on('mouseenter', 'points', function() {
-          map.getCanvas().style.cursor = 'pointer';
-        });
-
-        // Change it back to a pointer when it leaves.
-        map.on('mouseleave', 'points', function() {
-          map.getCanvas().style.cursor = '';
-        });
-        map.on('click', 'points', function(e) {
-          console.log('lciekd on nodes');
-          var coordinates = e.features[0].geometry.coordinates.slice();
-          var description = e.features[0].properties.nodeid;
-
-          // Ensure that if the map is zoomed out such that multiple
-          // copies of the feature are visible, the popup appears
-          // over the copy being pointed to.
-          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-          }
-
-          new mapboxgl.Popup({ className: 'apple-popup' })
-            .setLngLat(coordinates)
-            .setHTML(
-              `<h1>${description}</h1><h3>Price: ${e.features[0].properties.price}</h3>`
-            )
-            .addTo(map);
-        });
-      });
-      console.log('features', this.state.features);
-    }, 1000);
+    // repeat every 5 minutes
+    this.handlePageReload();
   }
 
   handleChange = selectedOption => {
+    const { long, lat } = selectedOption.properties;
+
     map.jumpTo({
-      center: [selectedOption.properties.long, selectedOption.properties.lat],
+      center: [long, lat],
       zoom: 14
     });
 
